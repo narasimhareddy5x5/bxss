@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Something Cooking</title>
+    <style>
+        /* Reset and body styling */
+        body {
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background: #111; /* Dark background */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Smoke effect */
+        .smoke {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://5x5.in/cooking.webp') repeat; /* Default smoke background for desktop */
+            background-size: cover;
+            opacity: 0.2;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Mobile-specific background */
+        @media (max-width: 768px) {
+            .smoke {
+                background: url('https://5x5.in/cooking2.webp') repeat; /* Mobile-specific background */
+                background-size: cover;
+                opacity: 0.2;
+            }
+        }
+
+        /* Main content styles */
+        h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #4CAF50; /* Breaking Bad green */
+            text-transform: uppercase;
+            margin: 0;
+            z-index: 2;
+            text-align: center;
+        }
+
+        h1 span {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2em 0.4em;
+            border: 1px solid #4CAF50;
+            margin-right: 5px;
+            display: inline-block;
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #9E9E9E; /* Subdued grey */
+            text-align: center;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        /* Button Styling */
+        .button {
+            margin-top: 30px;
+            padding: 10px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #111;
+            background: #4CAF50;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .button:hover {
+            background: #388E3C;
+        }
+
+        /* Full-page layout alignment fix */
+        .container {
+            position: relative;
+            z-index: 2; /* Ensure text is above smoke */
+            text-align: center;
+        }
+
+        /* Canvas for confetti */
+        #confettiCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* Audio Player Equalizer */
+        .edgtf-website-song {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-top: 20px;
+            z-index: 2;
+        }
+
+        .edgtf-song-play-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .edgtf-equalizer {
+            display: flex;
+            gap: 2px;
+        }
+
+        .edgtf-equalizer-bar {
+            width: 4px;
+            height: 10px;
+            background: #4CAF50;
+            animation: equalizer 1s infinite ease-in-out;
+        }
+
+        @keyframes equalizer {
+            0%, 100% {
+                height: 10px;
+            }
+            50% {
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="smoke"></div>
+    <div class="container">
+        <!-- Main Heading -->
+        <h1>
+            5X5
+        </h1>
+        <!-- Subtext -->
+        <p>Something is cooking, and it’s going to be explosive! Stay tuned for the next big thing.</p>
+        <!-- Call-to-Action Button -->
+        <button class="button" onclick="triggerConfetti()">Cook with Us</button>
+
+        <!-- Audio Player with Equalizer -->
+        <a class="edgtf-website-song edgtf-track-playing edgtf-track-in-progress">
+            <audio src="https://knoxss.me/wp-content/uploads/2018/09/Web-song.mp3" controls></audio>
+            <div class="edgtf-song-play-icon ion-play"></div>
+            <div class="edgtf-equalizer">
+                <div id="edgtf-equalizer-bar-1" class="edgtf-equalizer-bar"></div>
+                <div id="edgtf-equalizer-bar-2" class="edgtf-equalizer-bar"></div>
+                <div id="edgtf-equalizer-bar-3" class="edgtf-equalizer-bar"></div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="backgroundMusic" loop muted autoplay>
+        <source src="https://5x5.in/background-music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <script>
+        // Confetti Effect Script
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const confettiParticles = [];
+
+        function createParticle() {
+            return {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                r: Math.random() * 4 + 2,
+                d: Math.random() * canvas.width,
+                color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                tilt: Math.random() * 10 - 5,
+                speed: Math.random() * 2 + 1,
+            };
+        }
+
+        function initConfetti() {
+            for (let i = 0; i < 150; i++) {
+                confettiParticles.push(createParticle());
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiParticles.forEach((particle) => {
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+                ctx.fillStyle = particle.color;
+                ctx.fill();
+            });
+        }
+
+        function updateParticles() {
+            confettiParticles.forEach((particle) => {
+                particle.y += particle.speed;
+                particle.x += particle.tilt;
+                if (particle.y > canvas.height) {
+                    particle.y = -10;
+                    particle.x = Math.random() * canvas.width;
+                }
+            });
+        }
+
+        function loop() {
+            drawParticles();
+            updateParticles();
+            requestAnimationFrame(loop);
+        }
+
+        function triggerConfetti() {
+            initConfetti();
+            loop();
+            setTimeout(() => {
+                confettiParticles.length = 0; // Clear confetti after 5 seconds
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
