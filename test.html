@@ -112,38 +112,64 @@
             z-index: 3;
         }
 
-        /* Audio Player Equalizer */
+        /* Audio Player Styles */
         .edgtf-website-song {
             display: flex;
             align-items: center;
+            justify-content: center;
+            flex-direction: column;
             cursor: pointer;
             margin-top: 20px;
-            z-index: 2;
         }
 
         .edgtf-song-play-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid orange;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .ion-play, .ion-pause {
             font-size: 24px;
-            margin-right: 10px;
+            color: orange;
         }
 
         .edgtf-equalizer {
             display: flex;
-            gap: 2px;
+            gap: 5px;
         }
 
         .edgtf-equalizer-bar {
-            width: 4px;
-            height: 10px;
-            background: #4CAF50;
-            animation: equalizer 1s infinite ease-in-out;
+            width: 6px;
+            height: 25px;
+            background: orange;
+            animation: bounce 1s infinite ease-in-out;
+            transform-origin: bottom;
         }
 
-        @keyframes equalizer {
+        #edgtf-equalizer-bar-1 {
+            animation-delay: 0.2s;
+        }
+
+        #edgtf-equalizer-bar-2 {
+            animation-delay: 0.4s;
+        }
+
+        #edgtf-equalizer-bar-3 {
+            animation-delay: 0.6s;
+        }
+
+        /* Bounce animation */
+        @keyframes bounce {
             0%, 100% {
                 height: 10px;
             }
             50% {
-                height: 20px;
+                height: 30px;
             }
         }
     </style>
@@ -152,30 +178,25 @@
     <div class="smoke"></div>
     <div class="container">
         <!-- Main Heading -->
-        <h1>
-            5X5
-        </h1>
+        <h1>5X5</h1>
         <!-- Subtext -->
         <p>Something is cooking, and it’s going to be explosive! Stay tuned for the next big thing.</p>
         <!-- Call-to-Action Button -->
         <button class="button" onclick="triggerConfetti()">Cook with Us</button>
 
-        <!-- Audio Player with Equalizer -->
-        <a class="edgtf-website-song edgtf-track-playing edgtf-track-in-progress">
-            <audio src="https://knoxss.me/wp-content/uploads/2018/09/Web-song.mp3" controls></audio>
-            <div class="edgtf-song-play-icon ion-play"></div>
+        <!-- Custom Audio Player -->
+        <div class="edgtf-website-song">
+            <audio id="webSong" src="https://knoxss.me/wp-content/uploads/2018/09/Web-song.mp3"></audio>
+            <div class="edgtf-song-play-icon" onclick="toggleAudio()">
+                <div id="playIcon" class="ion-play"></div>
+            </div>
             <div class="edgtf-equalizer">
                 <div id="edgtf-equalizer-bar-1" class="edgtf-equalizer-bar"></div>
                 <div id="edgtf-equalizer-bar-2" class="edgtf-equalizer-bar"></div>
                 <div id="edgtf-equalizer-bar-3" class="edgtf-equalizer-bar"></div>
             </div>
-        </a>
+        </div>
     </div>
-
-    <!-- Background Music -->
-    <audio id="backgroundMusic" loop muted autoplay>
-        <source src="https://5x5.in/background-music.mp3" type="audio/mpeg">
-    </audio>
 
     <!-- Confetti Canvas -->
     <canvas id="confettiCanvas"></canvas>
@@ -240,6 +261,25 @@
             setTimeout(() => {
                 confettiParticles.length = 0; // Clear confetti after 5 seconds
             }, 5000);
+        }
+
+        // Audio Player Script
+        const audio = document.getElementById("webSong");
+        const playIcon = document.getElementById("playIcon");
+        const equalizerBars = document.querySelectorAll(".edgtf-equalizer-bar");
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                playIcon.classList.remove("ion-play");
+                playIcon.classList.add("ion-pause");
+                equalizerBars.forEach(bar => bar.style.animationPlayState = "running");
+            } else {
+                audio.pause();
+                playIcon.classList.remove("ion-pause");
+                playIcon.classList.add("ion-play");
+                equalizerBars.forEach(bar => bar.style.animationPlayState = "paused");
+            }
         }
     </script>
 </body>
